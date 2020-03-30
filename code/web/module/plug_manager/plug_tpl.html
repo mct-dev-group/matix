@@ -1,0 +1,30 @@
+<% for(var i = 0; i < plugList.length; i++){ %>
+  <% var plug = plugList[i] %>
+  <% if(plug.children && plug.children.length > 0) { %>
+    <div class="dropdown">
+      <button class="btn btn-primary btn-sm dropdown-toggle <%= plug.icon ? plug.icon : 'fa fa-th-large' %>"
+        style="height: 30px;" type="button" id="<%= plug.name %>" data-toggle="dropdown" aria-haspopup="true"
+        aria-expanded="false" data-plugname="<%= plug.name %>"
+      >
+      <%= plug.title %>
+      </button>
+      <div class="dropdown-menu" aria-labelledby="<%= plug.name %>">
+        <% var children = plug.children %>
+        <% for(var j = 0; j < children.length; j++){ %>
+          <% var child = children[j] %>
+          <button class="plug_btn btn-sm dropdown-item <%= child.icon %>" type="button" 
+            data-plugname="<%= plug.name %>:<%= child.type %>">
+            <%= child.title %>
+        </button>
+        <% } %>
+      </div>
+    </div>
+  <% } else {%>
+  <div>
+    <button class="plug_btn btn btn-primary btn-sm <%= plug.icon ? plug.icon : 'fa fa-th-large' %>" 
+      style="height: 30px;"  type="button" data-plugname="<%= plug.name %>">
+      <%= plug.title %>
+    </button>
+  </div>
+  <% } %>
+<% } %>

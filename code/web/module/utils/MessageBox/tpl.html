@@ -1,0 +1,17 @@
+<div class="modal fade" id="<%= modalId %>" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><%= data.title %></h5>
+      </div>
+      <div class="modal-body">
+        <%= data.message %>
+      </div>
+      <div class="modal-footer">        
+        <button type="button" class="btn btn-secondary" data-mydata='msgbox_cancel' id='test'><%= data.cancelButtonText||'取消'  %></button>
+        <button type="button" class="btn btn-primary" data-mydata='msgbox_confirm'><%= data.confirmButtonText||'确定' %></button>
+      </div>
+    </div>
+  </div>
+</div>
+  

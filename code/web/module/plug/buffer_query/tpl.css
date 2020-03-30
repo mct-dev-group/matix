@@ -1,0 +1,43 @@
+.buffer_poi{
+  background:url(./../../../images/DefaultIcon.png); 
+  background-position:center left; 
+  background-repeat: no-repeat;
+  height:16px;
+  width:16px;
+  line-height:10px;
+  cursor: pointer;
+}
+.buffer_poi .pop {
+  display: none;
+  margin-left:16px; 
+  font-size:9px; 
+  white-space: nowrap;
+  width:280px;
+  background: #fff;
+  color: #000; 
+  border-radius: 3px;
+  transform: translate(-144px,-250px);
+}
+.buffer_poi .pop:after{
+  border: solid transparent;
+  content: ' ';
+  height: 0;
+  left: 45%;
+  position: absolute;
+  width: 0;
+  border-width: 10px;
+  border-top-color: #fff;
+}
+
+.buffer_poi .pop ul {
+  max-height: 230px;
+  overflow-y: auto;
+  margin: 0;
+  list-style: none;
+}
+
+.buffer_poi .pop ul li{
+  height:20px;
+  line-height:20px;
+  padding: 5px;
+}

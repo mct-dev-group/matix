@@ -1,0 +1,8 @@
+.compass {
+  z-index: 100;
+  width: 84px;
+  height: 84px;
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+}
