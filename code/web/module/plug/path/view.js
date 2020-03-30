@@ -19,7 +19,8 @@ define(function(require, exports, module){
       'click button[role=control]':'startFunc',
       'click button[role=speedUp]':'speedUpFunc',
       'click button[role=slowDown]':'slowDownFunc',
-      'click button[role=startPoint]':'handleEdit'
+      'click button[role=startPoint]':'handleEdit',
+      'change #PathRoamingImportPointFile':'handleChange'
     },
     initPlug(){      
       eventBus.trigger('addPlug',{
@@ -77,6 +78,7 @@ define(function(require, exports, module){
     deactivate(){
       this.deactivateStartPathRoaming();
       this.deactivateCollectPathPoint();
+      
     },
     activateCollectPathPoint(){      
       bt_event.addEventListener("GUIEvent\\KM\\OnMouseButtonDown", this.collectPathPointMouseDown.bind(this));
@@ -212,11 +214,37 @@ define(function(require, exports, module){
           this.data.pathRoamingRate -= 0.01;
       }
     },
+    handleChange(evt){      
+      let file = evt.target.files[0];
+      if (!file) return;      
+      if (file.name.split(".").pop()!=='txt') {
+        msg.error('导入文件格式错误，需为txt格式文件！');
+      } else {
+        let fileReader = new FileReader();
+        fileReader.readAsText(file);
+        fileReader.onload = (e) =>{
+          let text = e.target.result;
+          let list = text.split('\r\n');
+          if (!list[list.length - 1]) {
+            list.length = list.length - 1;
+          }
+          let pointList = [];
+          for (let i = 0; i < list.length; i++) {
+            pointList.push(JSON.parse(list[i]));
+          }
+          $("#PathRoamingImportPointFile").val("");
+          this.data.pointList = pointList;
+          this.deactivateCollectPathPoint();
+          this.deactivateStartPathRoaming();
+          msg.success('导入路径点文件成功。');
+        }
+      }
+    },
     clearPointAndLine(pointList){
       if (!pointList) return;
       bt_Util.executeScript("Render\\RenderDataContex\\DynamicFrame\\DelRenderObj PathRoamingSignLine 8;");
       for (let i = 0; i < pointList.length; i++) {
-          bt_Plug_Annotation.removeAnnotation("PathRoamingSign" + i);
+        bt_Plug_Annotation.removeAnnotation("PathRoamingSign" + i);
       }
     },
     collectPathPointMouseDown(ep){
@@ -269,7 +297,8 @@ define(function(require, exports, module){
       bt_event.removeEventListener("GUIEvent\\KM\\OnMouseButtonUp", this.collectPathPointMouseUp.bind(this));
       this.clearPointAndLine(this.data.pointList);
       bt_Util.executeScript("Render\\ForceRedraw;");
-      $(document).off("keydown");      
+      $(document).off("keydown");
+      this.$('#pathTipDiv').length&&this.$('#pathTipDiv').remove();      
     },
     deactivateStartPathRoaming(){
       bt_event.removeEventListener("Render\\BeforeRender", this.beforeRender.bind(this));
@@ -287,6 +316,7 @@ define(function(require, exports, module){
         }
       }
       this.data.rotationAngle = 0;
+      this.$('#pathRoamingDiv').length&&this.$('#pathRoamingDiv').remove();
     },
     getSiteByDistance(distance, pointList){
         let perLength = 0;
@@ -409,16 +439,17 @@ define(function(require, exports, module){
     },
     importPathRoamingData(){
         if (this.data.pointList) {            
-          msgbox.confirm('此操作将覆盖当前已有的路径点数据, 是否继续?', '提示',).then(()=>{              
+          msgbox.confirm('此操作将覆盖当前已有的路径点数据, 是否继续?', '提示',).then(()=>{
+            console.log(this);
             const html=$('<div><input type="file" id="PathRoamingImportPointFile" style="display: none;"></div>');              
-            $('body').append(html);
+            this.$el.html(html);
             $("#PathRoamingImportPointFile").click();
           }).catch(()=>{
             return
           })
         } else {
           const html=$('<div><input type="file" id="PathRoamingImportPointFile" style="display: none;"></div>');              
-          $('body').append(html);
+          this.$el.html(html);
           $("#PathRoamingImportPointFile").click();
         }
     },

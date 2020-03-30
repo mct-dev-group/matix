@@ -1,17 +1,15 @@
 #pathContainer .card{
   position: fixed;
   z-index: 11;
-  
+  right:10px;
+  top:100px;
+  opacity:0.8;
 }
 #pathContainer i.fa.fa-info-circle{
   color: #0c5460;
   margin-right: 5px;
 }
 /* control */
-#pathRoamingDiv{
-  right:10px;
-  bottom:30px;
-}
 #pathRoamingDiv .btn-group-box{
   text-align: center;
 }
@@ -30,9 +28,4 @@
   text-align: center;
 }
 /* tip */
-#pathTipDiv{
-  right:10px;
-  top:100px;
-  opacity:0.8;
-}
 
