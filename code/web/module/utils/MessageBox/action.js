@@ -9,11 +9,6 @@ define(function(require, exports, module){
       'click [data-mydata=msgbox_confirm]': 'handleConfirm'
     },
     template:_.template(html),
-    initialize:function(){
-      // console.log(this);
-      // this.render();
-      // $('body').append('<div id="messageBoxContainer"></div>')
-    },
     render:function(data){      
       this.$el.html(this.template({data,modalId:this.modalId}));
       $('#'+this.modalId).on('hidden.bs.modal',function(){        
@@ -28,8 +23,7 @@ define(function(require, exports, module){
         this.reject=reject;
       });
     },
-    handleConfirm:function(){
-      console.log(this);
+    handleConfirm:function(){      
       $('#'+this.modalId).modal('hide');
       this.resolve();
     },
