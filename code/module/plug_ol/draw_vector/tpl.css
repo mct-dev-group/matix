@@ -1,0 +1,11 @@
+#drawPanel{
+  position: absolute;
+  right: 60px;
+  top: 100px;
+  border: 0;
+  display: none;
+}
+
+#drawPanel .card-header{
+  padding: .45rem 1.25rem;
+}

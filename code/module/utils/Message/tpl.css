@@ -1,0 +1,13 @@
+.myAlert{
+  position: fixed;
+  top:20px;
+  left:50%;
+  transform: translateX(-50%);
+  z-index:9999;
+  min-width: 280px;
+  max-width: 280px;
+  display: none;  
+}
+.myAlert i{
+  margin-right: 8px;
+}
