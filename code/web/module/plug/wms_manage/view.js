@@ -94,6 +94,31 @@ define(function(require, exports, module){
       // 移除显示的数据
       this.hideData();
       // 移除wms图片纹理
+      this.clearImage();
+      // 更新相机位置 为默认值 null
+      this.lastP = null;
+    },
+    onBeforRender () {
+      if (this.sendingRequest) return;
+      // 获取相机位置
+      const p = bt_Util.getCameraParam().cameraPt;
+      // 如果当前相机位置和上一次请求图片时相机位置相等 则不再请求 直接return
+      if (
+        this.lastP &&
+        this.lastP.x == p.x &&
+        this.lastP.y == p.y &&
+        this.lastP.z == p.z
+      )
+        return;
+      // 更新相机位置
+      this.lastP = p;
+      // 发送请求
+      this.requestImage();
+    },
+    onClick (e) {
+      this.requestFeature(e);
+    },
+    clearImage () {
       bt_Util.SetGlobalOrthoTexture1(
         -9999999999,
         -9999999999,
@@ -104,15 +129,6 @@ define(function(require, exports, module){
         []
       );
       bt_Util.executeScript("Render\\ForceRedraw;");
-      // 更新相机位置 为默认值 null
-      this.lastP = null;
-    },
-    onBeforRender () {
-      if (this.sendingRequest) return;
-      this.requestImage();
-    },
-    onClick (e) {
-      this.requestFeature(e);
     },
     requestImage() {
       if (this.checkedLayers && this.checkedLayers.length > 0) {
@@ -155,7 +171,7 @@ define(function(require, exports, module){
           srs: srs,
           format: format
         });
-        wmsHelper.getRect(bbox, width, height, function(data){
+        wmsHelper.getRect(bbox, width, height, (data) =>{
           for (let i = 0; i < data.length; i = i + 4) {
             data[i + 3] *= 0.5;
           }
@@ -164,6 +180,8 @@ define(function(require, exports, module){
           // 请求完成 状态设为 false
           this.sendingRequest = false;
         });
+      } else {
+        this.clearImage();
       }
     },
     requestFeature(e) {
