@@ -1,0 +1,15 @@
+.defaultPoint{
+  background:url(/images/DefaultIcon.png) center left no-repeat;
+  width:16px; 
+  height:16px;
+  line-height:10px;
+}
+.grab,.grab:hover{
+  cursor: -webkit-grab;
+  cursor: grab;
+  
+}
+.grabbing,.grabbing:hover{
+  cursor: -webkit-grabbing;
+  cursor: grabbing;
+}
