@@ -11,6 +11,8 @@
   <link rel="stylesheet" href="./lib/ol-6.2.1/ol.css">
   <link rel="stylesheet" href="./css/global.css">
   <title>3DMatrix</title>
+</head>
+<body style="overflow: hidden;">
   <script>
     var Module = {};
     Module.TOTAL_MEMORY = 512 * 1024 * 1024;
@@ -37,10 +39,13 @@
   <script src="./bt_util.js"></script>
   <script src="./bt_event.js"></script>
   <script src="./bt_plug_annotation.js"></script>
-  
+
+  <!--其他文件-->
+  <script src="./common/bt_localDB.js"></script>
+  <script src="./common/bt_indexedDB.js"></script>
+
   <!--模块入口-->
   <script src="./module/main.js"></script>
-</head>
-<body style="overflow: hidden;">
+
 </body>
 </html>

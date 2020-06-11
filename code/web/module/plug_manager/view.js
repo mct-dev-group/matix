@@ -25,7 +25,7 @@ define(function(require, exports, module){
         var currentPlug = _.find(self.plugList, function(o) {
           return o.name == plugNameArr[0];
         });
-        
+
         self.deactivateOtherPlug(currentPlug);
 
         if (plugNameArr.length == 1) { // 无子级
@@ -61,6 +61,7 @@ define(function(require, exports, module){
             });
             if (sub.isOnce) { // 点击之后状态还原
               $('button[data-plugname="'+ plugNameArr[0]+ ':'+ plugNameArr[1]+'"]').removeClass('active');
+              $('button[data-plugname="'+ plugNameArr[0]+'"]').removeClass('active');
             }
             currentPlug.value.activate(plugNameArr[1]);
           }

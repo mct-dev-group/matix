@@ -20,8 +20,22 @@ define(function(require, exports, module){
       // bt_Util.executeScript("Render\\RenderDataContex\\DataPump\\OsgScene\\OpenOsgScene mc://http://" + window.location.hostname + ":8020/ gwh/GWH.osgb.pb;");
       // bt_Util.executeScript("Render\\Camera\\JumpTo 547300.000000 3374948.750000 431.889771;");
 
-      bt_Util.executeScript("Render\\RenderDataContex\\DataPump\\OsgScene\\OpenOsgScene mc://http://" + window.location.hostname + ":8030/terrain/ wh.osgb.pb;");
-      bt_Util.executeScript("Render\\Camera\\JumpTo 539461.366484 3372741.78599 990 539444.87149 3373056.529219 100;");
+      // bt_Util.executeScript("Render\\RenderDataContex\\DataPump\\OsgScene\\OpenOsgScene mc://http://" + window.location.hostname + ":8030/terrain/ wh.osgb.pb;");
+      // bt_Util.executeScript("Render\\Camera\\JumpTo 539461.366484 3372741.78599 990 539444.87149 3373056.529219 100;");
+
+      // bt_Util.executeScript("Render\\RenderDataContex\\DataPump\\OsgScene\\OpenOsgScene mc://http://192.168.0.250:10000/terrain/ wh.osgb.pb;");
+      // bt_Util.executeScript("Render\\Camera\\JumpTo 539461.366484 3372741.78599 990 539444.87149 3373056.529219 100;");
+
+      // bt_Util.executeScript("Render\\RenderDataContex\\DataPump\\OsgScene\\OpenOsgScene mc://http://192.168.0.250:9006/pb/ index.pb;");
+      // bt_Util.executeScript("Render\\RenderDataContex\\DataPump\\OsgScene\\OpenOsgScene mc://http://192.168.0.250:9006/terrain/ terrain.osgb.pb;");
+      // bt_Util.executeScript('Render\\CameraControl\\FlyTo3 524437 3959195 9542 524462 3961135 136.673102 500;');
+
+
+      bt_Util.executeScript("Render\\RenderDataContex\\DataPump\\OsgScene\\OpenOsgScene mc://http://192.168.0.250:9006/pb/ index.pb;");
+      bt_Util.executeScript("Render\\RenderDataContex\\DataPump\\OsgScene\\OpenOsgScene mc://http://192.168.0.250:9006/terrain/ terrain.osgb.pb;");
+      
+      bt_Util.executeScript('Render\\CameraControl\\FlyTo3 524437 3959195 9542 524462 3961135 136.673102 500;');
+
     },
     initCompass: function() {
       this.img = new Image();
