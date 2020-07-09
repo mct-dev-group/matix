@@ -40,7 +40,7 @@ var bt_event = {
 
       let log_count = BT_LogGetCount(bt_log);
       if (log_count > 0) {
-        let log_str = Module.Pointer_stringify(BT_LogGetLog(0, bt_log));
+        let log_str = Module.UTF8ToString(BT_LogGetLog(0, bt_log));
         console.log(log_str);
       }
       BT_LogClearAll(bt_log);
@@ -164,20 +164,20 @@ var bt_event = {
       bt_event.bt_DefaultGUIAction.km.onKeyUp(key);
     }
   }, //KM
-  addEventListener: function (e, f) {
+  addEventListener: function (e, f) {    
     if (!bt_event.events[e]) {
-      bt_event.events[e] = {};
+      bt_event.events[e] = new Map();
     }
-    let event = bt_event.events[e];
-    if (!event[f]) {
-      event[f] = f;
+    let event = bt_event.events[e];    
+    if (!event.has(f)) {
+      event.set(f,f)
     }
   },
-  removeEventListener: function (e, f) {
+  removeEventListener: function (e, f) {    
     if (!bt_event.events[e]) return;
     let event = bt_event.events[e];
-    if (!event[f]) return;
-    delete event[f];
+    if (!event.has(f)) return;
+    event.delete(f);
   },
   on_BTEvent: function (e) {
     let event_param = [];
@@ -186,8 +186,8 @@ var bt_event = {
     }
     let event = this.events[e[0]];
     if (!event) return;
-    for (let ef in event) {
-      if (event[ef](event_param)) {
+    for (const v of event.values()) {
+      if (v(event_param)) {
         return true;
       }
     }
@@ -548,7 +548,7 @@ function JS_BT_UIElementAddText(msg, x, y) {
 
   divSet.textNode.innerHTML =
     "<div style='background:url(assets/images/DefaultIcon.png); background-position:center left; background-repeat: no-repeat; height:16px;line-height:10px;'><span style='margin-left:16px; font-size:9px; white-space: nowrap;'>" +
-    Module.Pointer_stringify(msg) +
+    Module.UTF8ToString(msg) +
     "</span></div>";
 }
 

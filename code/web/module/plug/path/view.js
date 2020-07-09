@@ -4,6 +4,7 @@ define(function(require, exports, module){
   const msgbox=require('../../utils/MessageBox/action');
   const msg=require('../../utils/Message/action');
   $('body').append('<div id="pathContainer"></div>');
+  let events={};
   let PathView=Backbone.View.extend({
     el:'#pathContainer',    
     data: {
@@ -80,9 +81,11 @@ define(function(require, exports, module){
       this.deactivateCollectPathPoint();
       
     },
-    activateCollectPathPoint(){      
-      bt_event.addEventListener("GUIEvent\\KM\\OnMouseButtonDown", this.collectPathPointMouseDown.bind(this));
-      bt_event.addEventListener("GUIEvent\\KM\\OnMouseButtonUp", this.collectPathPointMouseUp.bind(this));
+    activateCollectPathPoint(){
+      events['collectPathPointMouseDown']=this.collectPathPointMouseDown.bind(this);
+      events['collectPathPointMouseUp']=this.collectPathPointMouseUp.bind(this);
+      bt_event.addEventListener("GUIEvent\\KM\\OnMouseButtonDown", events['collectPathPointMouseDown']);
+      bt_event.addEventListener("GUIEvent\\KM\\OnMouseButtonUp", events['collectPathPointMouseUp']);
       bt_Util.executeScript("Render\\ForceRedraw;");
 
       $(document).off("keydown").on('keydown',(e)=>{        
@@ -181,27 +184,35 @@ define(function(require, exports, module){
       if (!this.data.startSign) {
         this.data.startSign = true;          
         this.$('button[role=control]').text("暂停");
-        this.data.preDate = new Date().getTime();        
-        bt_event.addEventListener("Render\\BeforeRender", this.beforeRender.bind(this));
+        this.data.preDate = new Date().getTime();
+        events['beforeRender']=this.beforeRender.bind(this);
+        events['pathRoaming_mouseWheel']=this.pathRoaming_mouseWheel.bind(this);
+        events['changeAngle_mouseDown']=this.changeAngle_mouseDown.bind(this);
+        events['changeAngle_mouseMove']=this.changeAngle_mouseMove.bind(this);
+        events['changeAngle_mouseUp']=this.changeAngle_mouseUp.bind(this);
+        events['disable_click']=this.disable_click.bind(this);
+        events['OnMouseDbClick']=this.disable_DBClick.bind(this);
+
+        bt_event.addEventListener("Render\\BeforeRender", events['beforeRender']);
         bt_Util.executeScript("Render\\ForceRedraw;");
 
-        bt_event.addEventListener("GUIEvent\\KM\\OnMouseWheel", this.pathRoaming_mouseWheel.bind(this));
-        bt_event.addEventListener("GUIEvent\\KM\\OnMouseButtonDown", this.changeAngle_mouseDown.bind(this));
-        bt_event.addEventListener("GUIEvent\\KM\\OnMouseMove", this.changeAngle_mouseMove.bind(this));
-        bt_event.addEventListener("GUIEvent\\KM\\OnMouseButtonUp", this.changeAngle_mouseUp.bind(this));
-        bt_event.addEventListener("GUIEvent\\KM\\OnMouseClick", this.disable_click.bind(this));
-        bt_event.addEventListener("GUIEvent\\KM\\OnMouseDbClick", this.disable_DBClick.bind(this));
+        bt_event.addEventListener("GUIEvent\\KM\\OnMouseWheel", events['pathRoaming_mouseWheel'] );
+        bt_event.addEventListener("GUIEvent\\KM\\OnMouseButtonDown", events['changeAngle_mouseDown']);
+        bt_event.addEventListener("GUIEvent\\KM\\OnMouseMove", events['changeAngle_mouseMove']);
+        bt_event.addEventListener("GUIEvent\\KM\\OnMouseButtonUp", events['changeAngle_mouseUp']);
+        bt_event.addEventListener("GUIEvent\\KM\\OnMouseClick", events['disable_click']);
+        bt_event.addEventListener("GUIEvent\\KM\\OnMouseDbClick", events['OnMouseDbClick']);
       } else {        
         this.data.startSign = false;          
         this.$('button[role=control]').text("开始");
-        bt_event.removeEventListener("Render\\BeforeRender", this.beforeRender.bind(this));
+        bt_event.removeEventListener("Render\\BeforeRender", events['beforeRender']);
 
-        bt_event.removeEventListener("GUIEvent\\KM\\OnMouseWheel", this.pathRoaming_mouseWheel.bind(this));
-        bt_event.removeEventListener("GUIEvent\\KM\\OnMouseButtonDown", this.changeAngle_mouseDown.bind(this));
-        bt_event.removeEventListener("GUIEvent\\KM\\OnMouseMove", this.changeAngle_mouseMove.bind(this));
-        bt_event.removeEventListener("GUIEvent\\KM\\OnMouseButtonUp", this.changeAngle_mouseUp.bind(this));
-        bt_event.removeEventListener("GUIEvent\\KM\\OnMouseClick", this.disable_click.bind(this));
-        bt_event.removeEventListener("GUIEvent\\KM\\OnMouseDbClick", this.disable_DBClick.bind(this));
+        bt_event.removeEventListener("GUIEvent\\KM\\OnMouseWheel", events['pathRoaming_mouseWheel']);
+        bt_event.removeEventListener("GUIEvent\\KM\\OnMouseButtonDown", events['changeAngle_mouseDown']);
+        bt_event.removeEventListener("GUIEvent\\KM\\OnMouseMove", events['changeAngle_mouseMove']);
+        bt_event.removeEventListener("GUIEvent\\KM\\OnMouseButtonUp", events['changeAngle_mouseUp']);
+        bt_event.removeEventListener("GUIEvent\\KM\\OnMouseClick", events['disable_click']);
+        bt_event.removeEventListener("GUIEvent\\KM\\OnMouseDbClick", events['OnMouseDbClick']);
       }
     },
     speedUpFunc(){
@@ -293,21 +304,21 @@ define(function(require, exports, module){
       bt_Util.executeScript("Render\\ForceRedraw;");
     },
     deactivateCollectPathPoint(){
-      bt_event.removeEventListener("GUIEvent\\KM\\OnMouseButtonDown", this.collectPathPointMouseDown.bind(this));
-      bt_event.removeEventListener("GUIEvent\\KM\\OnMouseButtonUp", this.collectPathPointMouseUp.bind(this));
+      bt_event.removeEventListener("GUIEvent\\KM\\OnMouseButtonDown", events['collectPathPointMouseDown']);
+      bt_event.removeEventListener("GUIEvent\\KM\\OnMouseButtonUp", events['collectPathPointMouseUp']);
       this.clearPointAndLine(this.data.pointList);
       bt_Util.executeScript("Render\\ForceRedraw;");
       $(document).off("keydown");
       this.$('#pathTipDiv').length&&this.$('#pathTipDiv').remove();      
     },
     deactivateStartPathRoaming(){
-      bt_event.removeEventListener("Render\\BeforeRender", this.beforeRender.bind(this));
-      bt_event.removeEventListener("GUIEvent\\KM\\OnMouseWheel", this.pathRoaming_mouseWheel.bind(this));
-      bt_event.removeEventListener("GUIEvent\\KM\\OnMouseButtonDown", this.changeAngle_mouseDown.bind(this));
-      bt_event.removeEventListener("GUIEvent\\KM\\OnMouseMove", this.changeAngle_mouseMove.bind(this));
-      bt_event.removeEventListener("GUIEvent\\KM\\OnMouseButtonUp", this.changeAngle_mouseUp.bind(this));
-      bt_event.removeEventListener("GUIEvent\\KM\\OnMouseClick", this.disable_click.bind(this));
-      bt_event.removeEventListener("GUIEvent\\KM\\OnMouseDbClick", this.disable_DBClick.bind(this));      
+      bt_event.removeEventListener("Render\\BeforeRender", events['beforeRender']);
+      bt_event.removeEventListener("GUIEvent\\KM\\OnMouseWheel", events['pathRoaming_mouseWheel']);
+      bt_event.removeEventListener("GUIEvent\\KM\\OnMouseButtonDown", events['changeAngle_mouseDown']);
+      bt_event.removeEventListener("GUIEvent\\KM\\OnMouseMove", events['changeAngle_mouseMove']);
+      bt_event.removeEventListener("GUIEvent\\KM\\OnMouseButtonUp", events['changeAngle_mouseUp']);
+      bt_event.removeEventListener("GUIEvent\\KM\\OnMouseClick", events['disable_click']);
+      bt_event.removeEventListener("GUIEvent\\KM\\OnMouseDbClick", events['disable_DBClick']);      
 
       let pathRoamingPointList = this.data.pathRoamingPointList;
       if (pathRoamingPointList) {
@@ -352,14 +363,14 @@ define(function(require, exports, module){
           // this.data.startPathRoamingVue.controlText = "开始";
           this.$('button[role=control]').text('开始');
           this.data.startSign = false;
-          bt_event.removeEventListener("GUIEvent\\KM\\OnMouseWheel", this.pathRoaming_mouseWheel.bind(this));
-          bt_event.removeEventListener("GUIEvent\\KM\\OnMouseButtonDown", this.changeAngle_mouseDown.bind(this));
-          bt_event.removeEventListener("GUIEvent\\KM\\OnMouseMove", this.changeAngle_mouseMove.bind(this));
-          bt_event.removeEventListener("GUIEvent\\KM\\OnMouseButtonUp", this.changeAngle_mouseUp.bind(this));
-          bt_event.removeEventListener("GUIEvent\\KM\\OnMouseClick", this.disable_click.bind(this));
-          bt_event.removeEventListener("GUIEvent\\KM\\OnMouseDbClick", this.disable_DBClick.bind(this));
+          bt_event.removeEventListener("GUIEvent\\KM\\OnMouseWheel", events['pathRoaming_mouseWheel']);
+          bt_event.removeEventListener("GUIEvent\\KM\\OnMouseButtonDown", events['changeAngle_mouseDown']);
+          bt_event.removeEventListener("GUIEvent\\KM\\OnMouseMove", events['changeAngle_mouseMove']);
+          bt_event.removeEventListener("GUIEvent\\KM\\OnMouseButtonUp", events['changeAngle_mouseUp']);
+          bt_event.removeEventListener("GUIEvent\\KM\\OnMouseClick", events['disable_click']);
+          bt_event.removeEventListener("GUIEvent\\KM\\OnMouseDbClick", events['disable_DBClick']);
           this.data.pathRoamingLength = 0;
-          bt_event.removeEventListener("Render\\BeforeRender", this.beforeRender.bind(this));
+          bt_event.removeEventListener("Render\\BeforeRender", events['beforeRender']);
           bt_Util.executeScript("Render\\ForceRedraw;");
           return true;
       }
