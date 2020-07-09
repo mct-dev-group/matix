@@ -1,0 +1,12 @@
+#aotuCollect {
+  position: absolute;
+  right: 60px;
+  top: 100px;
+  border: 0;
+  display: none;
+  width: 330px;
+  padding: 14px 26px 14px 13px;
+  border-radius: 8px;
+  border: 1px solid #ebeef5;
+  background: #fff;
+}
