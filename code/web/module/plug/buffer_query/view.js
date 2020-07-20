@@ -7,6 +7,11 @@ define(function(require, exports, module){
     pointArr: [],
     pos_length: 0, //标注长度
     movePoint: null,
+    initialize: function() {
+      this.onClick = this.onClick.bind(this);
+      this.onDbClick = this.onDbClick.bind(this);
+      this.onMouseMove = this.onMouseMove.bind(this);
+    },
     initPlug: function() {
       eventBus.trigger('addPlug',{
         name: 'plug_bufferQuery',
@@ -50,7 +55,7 @@ define(function(require, exports, module){
       this.drawType = type;
       this.pointArr = [];
       // 激活鼠标单击事件
-      bt_event.addEventListener("GUIEvent\\KM\\OnMouseClick", this.onClick.bind(this));
+      bt_event.addEventListener("GUIEvent\\KM\\OnMouseClick", this.onClick);
     },
     deactivate: function() {
       // 清除高亮效果
@@ -58,9 +63,9 @@ define(function(require, exports, module){
       // 移除标注
       this.removePos();
       // 事件失活
-      bt_event.removeEventListener("GUIEvent\\KM\\OnMouseClick", this.onClick.bind(this));
-      bt_event.removeEventListener("GUIEvent\\KM\\OnMouseMove", this.onMouseMove.bind(this));
-      bt_event.removeEventListener("GUIEvent\\KM\\OnMouseDbClick", this.onDbClick.bind(this));
+      bt_event.removeEventListener("GUIEvent\\KM\\OnMouseClick", this.onClick);
+      bt_event.removeEventListener("GUIEvent\\KM\\OnMouseMove", this.onMouseMove);
+      bt_event.removeEventListener("GUIEvent\\KM\\OnMouseDbClick", this.onDbClick);
     },
     onClick: function(e) {
       if (e[0] == 0) { // 鼠标左键单击
@@ -75,14 +80,14 @@ define(function(require, exports, module){
             case 'point':
               this.pointArr = [{x, y, z}];
               this.drawGeom();
-              bt_event.addEventListener("GUIEvent\\KM\\OnMouseDbClick", this.onDbClick.bind(this));
+              bt_event.addEventListener("GUIEvent\\KM\\OnMouseDbClick", this.onDbClick);
               break;
             case 'line':
             case 'polygon':
               this.pointArr.push({x, y, z});
               this.drawGeom();
-              bt_event.addEventListener("GUIEvent\\KM\\OnMouseMove", this.onMouseMove.bind(this));
-              bt_event.addEventListener("GUIEvent\\KM\\OnMouseDbClick", this.onDbClick.bind(this));
+              bt_event.addEventListener("GUIEvent\\KM\\OnMouseMove", this.onMouseMove);
+              bt_event.addEventListener("GUIEvent\\KM\\OnMouseDbClick", this.onDbClick);
               break;
             default:
               break;
@@ -90,9 +95,9 @@ define(function(require, exports, module){
         }
       } else if (e[0] == 2) { // 鼠标右键结束绘制 激活标注点击事件
         // 事件失活
-        bt_event.removeEventListener("GUIEvent\\KM\\OnMouseClick", this.onClick.bind(this));
-        bt_event.removeEventListener("GUIEvent\\KM\\OnMouseMove", this.onMouseMove.bind(this));
-        bt_event.removeEventListener("GUIEvent\\KM\\OnMouseDbClick", this.onDbClick.bind(this));
+        bt_event.removeEventListener("GUIEvent\\KM\\OnMouseClick", this.onClick);
+        bt_event.removeEventListener("GUIEvent\\KM\\OnMouseMove", this.onMouseMove);
+        bt_event.removeEventListener("GUIEvent\\KM\\OnMouseDbClick", this.onDbClick);
         // 清除绘制线段
         bt_Util.executeScript("Render\\RenderDataContex\\DynamicFrame\\DelRenderObj buffer_lineOrPolygon 8;");
         // 激活pos事件
@@ -127,8 +132,8 @@ define(function(require, exports, module){
         if (posArr[0] == 1) { // 击中场景
         
           // 移除鼠标移动和双击事件
-          bt_event.removeEventListener("GUIEvent\\KM\\OnMouseDbClick", this.onDbClick.bind(this));
-          bt_event.removeEventListener("GUIEvent\\KM\\OnMouseMove", this.onMouseMove.bind(this));
+          bt_event.removeEventListener("GUIEvent\\KM\\OnMouseDbClick", this.onDbClick);
+          bt_event.removeEventListener("GUIEvent\\KM\\OnMouseMove", this.onMouseMove);
           
           const type = this.drawType;
           const x = Number(posArr[1]), y = Number(posArr[2]), z = Number(posArr[3]);

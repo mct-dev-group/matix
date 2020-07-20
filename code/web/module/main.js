@@ -14,11 +14,11 @@ var modules = [
   './module/plug/measurement/action',
   './module/plug/capture_image/action',
   './module/plug/wms_manage/action',
-  './module/plug/buffer_query/action',
-  './module/plug/pb_reader/action',
-  './module/plug/path/action'
-  './module/plug/auto_collect/action'
-  './module/plug/perspective_analysis/action'
+  // './module/plug/buffer_query/action',
+  // './module/plug/pb_reader/action',
+  // './module/plug/path/action',
+  // './module/plug/auto_collect/action',
+  // './module/plug/perspective_analysis/action'
 
   // ol地图
   // './module/plug_ol/draw_vector/action'

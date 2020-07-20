@@ -16,17 +16,19 @@ define(function(require, exports, module){
       on_bt_a_post();
       BT_RenderFrame();
       bt_event.canvasgl_GUI_init();
-      bt_Util.executeScript("Render\\RenderDataContex\\DataPump\\SetClientCacheSize 0 256;");
-      // bt_Util.executeScript("Render\\RenderDataContex\\DataPump\\OsgScene\\OpenOsgScene mc://http://" + window.location.hostname + ":8020/ gwh/GWH.osgb.pb;");
-      // bt_Util.executeScript("Render\\Camera\\JumpTo 547300.000000 3374948.750000 431.889771;");
 
-      bt_Util.executeScript("Render\\RenderDataContex\\DataPump\\OsgScene\\OpenOsgScene mc://http://" + window.location.hostname + ":8030/gwh/ gwh.osgb.pb;");
-      // bt_Util.executeScript("Render\\Camera\\JumpTo 539461.366484 3372741.78599 990 539444.87149 3373056.529219 100;");
-      bt_Util.executeScript("Render\\Camera\\JumpTo 547300.000000 3374948.750000 131.889771;");
+      bt_Util.executeScript(`Render\\RenderDataContex\\DataPump\\SetClientCacheSize 0 ${config.clientCacheSize};`);
+      bt_Util.executeScript(`Render\\RenderDataContex\\DataPump\\SetMaxClientRequest ${config.maxClientRequest};`);
+      bt_Util.executeScript(`Render\\RenderDataContex\\DataPump\\OsgScene\\SetNodeLodFactor ${config.nodeLodFactor};`);
+      bt_Util.executeScript(`Render\\SetAA ${config.aa};`);
+
+      config.pbUrls.forEach(url => {
+        bt_Util.executeScript(`Render\\RenderDataContex\\DataPump\\OsgScene\\OpenOsgScene mc://${url};`);
+      });
+      bt_Util.executeScript(`Render\\Camera\\SetParam ${config.cameraParam};`);
     },
     initCompass: function() {
       this.img = new Image();
-      // this.img.src = './../../images/compass.png';
       this.img.src = './images/compass.png';
 
       this.canvas = document.createElement('canvas');
@@ -53,13 +55,6 @@ define(function(require, exports, module){
         }
       }
       let rot = -Math.PI / 2 + Math.atan2(dy, dx);
-      
-      // this.cav.save();
-      // this.cav.translate(this.img.width / 2, this.img.height / 2);
-      // this.cav.rotate(rot);
-      // this.cav.drawImage(this.img, -this.img.width/2, -this.img.height/2);
-      // this.cav.restore();
-
       this.cav.translate(this.img.width / 2, this.img.height / 2);
       this.cav.rotate(rot);
       this.cav.drawImage(this.img, -this.img.width/2, -this.img.height/2);

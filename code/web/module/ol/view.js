@@ -20,16 +20,17 @@ define(function(require, exports, module){
       }); 
       var layer = new ol.layer.Image({
         source: new ol.source.ImageWMS({
-          url: 'http://192.168.0.250:8888/geoserver/anren/wms',
+          url: 'http://localhost:6080/arcgis/services/test/village/MapServer/WmsServer',
           params: {
             FORMAT: 'image/png',
             VERSION: '1.1.1',
-            LAYERS: 'anren:country'
+            LAYERS: '0'
           }
         })
       });
       map.addLayer(layer);
-      map.getView().fit([409466.624899996, 2908195.347, 461413.781900003, 2970272.7048], map.getSize());
+      // map.getView().fit([409466.624899996, 2908195.347, 461413.781900003, 2970272.7048], map.getSize());
+      map.getView().fit([506973.70050449733,3948706.6800965876,536292.6614975285,3973749.959278135], map.getSize());
     }
     // initMap: function() {
     //   var map = Map.create({

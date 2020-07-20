@@ -12,6 +12,11 @@ define(function(require, exports, module){
     movePoint: null, //当前鼠标移动的点
     linePrevRresult: 0,
     linePointIdArr: [],
+    initialize: function() {
+      this.onClick = this.onClick.bind(this);
+      this.onDbClick = this.onDbClick.bind(this);
+      this.onMouseMove = this.onMouseMove.bind(this);
+    },
     initPlug: function() {
       eventBus.trigger('addPlug',{
         name: 'plug_measurement',
@@ -38,13 +43,13 @@ define(function(require, exports, module){
       this.drawType = type;
       this.pointArr = [];
       // 激活鼠标单击事件
-      bt_event.addEventListener("GUIEvent\\KM\\OnMouseClick", this.onClick.bind(this));
+      bt_event.addEventListener("GUIEvent\\KM\\OnMouseClick", this.onClick);
     },
     deactivate: function() {
       // 移除鼠标移动和双击事件
-      bt_event.removeEventListener("GUIEvent\\KM\\OnMouseClick", this.onClick.bind(this));
-      bt_event.removeEventListener("GUIEvent\\KM\\OnMouseDbClick", this.onDbClick.bind(this));
-      bt_event.removeEventListener("GUIEvent\\KM\\OnMouseMove", this.onMouseMove.bind(this));
+      bt_event.removeEventListener("GUIEvent\\KM\\OnMouseClick", this.onClick);
+      bt_event.removeEventListener("GUIEvent\\KM\\OnMouseDbClick", this.onDbClick);
+      bt_event.removeEventListener("GUIEvent\\KM\\OnMouseMove", this.onMouseMove);
       this.removePos();
       this.removeLine();
       bt_Util.executeScript(`Render\\ForceRedraw;`);
@@ -75,8 +80,8 @@ define(function(require, exports, module){
                 this.addPoint();
                 this.drawGeom();
               }
-              bt_event.addEventListener("GUIEvent\\KM\\OnMouseMove", this.onMouseMove.bind(this));
-              bt_event.addEventListener("GUIEvent\\KM\\OnMouseDbClick", this.onDbClick.bind(this));
+              bt_event.addEventListener("GUIEvent\\KM\\OnMouseMove", this.onMouseMove);
+              bt_event.addEventListener("GUIEvent\\KM\\OnMouseDbClick", this.onDbClick);
               break;
             default:
               break;
@@ -107,8 +112,8 @@ define(function(require, exports, module){
         const posArr = QueryPoint[0].split(" ");
         if (posArr[0] == 1) { // 击中场景
           // 移除鼠标移动和双击事件
-          bt_event.removeEventListener("GUIEvent\\KM\\OnMouseDbClick", this.onDbClick.bind(this));
-          bt_event.removeEventListener("GUIEvent\\KM\\OnMouseMove", this.onMouseMove.bind(this));
+          bt_event.removeEventListener("GUIEvent\\KM\\OnMouseDbClick", this.onDbClick);
+          bt_event.removeEventListener("GUIEvent\\KM\\OnMouseMove", this.onMouseMove);
           this.drawEnd = true;
           this.pointArr.push(this.movePoint);
           this.addPoint();

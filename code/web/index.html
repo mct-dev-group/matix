@@ -13,9 +13,10 @@
   <title>3DMatrix</title>
 </head>
 <body style="overflow: hidden;">
+  <script src="./config.js"></script>
   <script>
     var Module = {};
-    Module.TOTAL_MEMORY = 512 * 1024 * 1024;
+    Module.TOTAL_MEMORY = config.totalMemory || 1024*1024*1024;
   </script>
   <!--第三方库-->
   <script src="./lib/jquery-3.3.1.js"></script>

@@ -9,6 +9,8 @@
 #wmsManage .card-header{
   padding: .45rem 1.25rem;
 }
+
+
 .wms_poi{
   background:url(../../../images/DefaultIcon.png); 
   background-position:center left; 

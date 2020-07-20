@@ -5,7 +5,7 @@
 define(function(require, exports, module){
   var eventBus = require('../../utils/event_bus');
   var WMSHelper = require('./../../utils/wms_helper');
-  var WFSHelper = require('./../../utils/wfs_helper');
+  var WFSHelperX = require('./../../utils/wfs_helperX');
   
   var WMSManageView = Backbone.View.extend({
     offsetx: 0,
@@ -16,10 +16,13 @@ define(function(require, exports, module){
     sendingRequest: false,
     // 相机在上一次请求图片时的位置
     lastP: null,
+    isThirdLayer: false,
     // 选中图层组
     checkedLayers: [],
     initialize: function(tpl) {
       this.template = _.template(tpl);
+      this.onBeforRender = this.onBeforRender.bind(this);
+      this.onClick = this.onClick.bind(this);
     },
     render: function(data) {
       $('body').append(this.template(data));
@@ -27,15 +30,19 @@ define(function(require, exports, module){
     },
     initEvent: function() {
       var self = this;
+      // 复选框按钮事件
       $('#wmsManage div.card-body input[name="wms_manage_checked"]').click(function() {
-        var tempLayers = [];
-        $('#wmsManage div.card-body input[name="wms_manage_checked"]:checked').each(function(){//遍历每一个名字为interest的复选框，其中选中的执行函数    
-          tempLayers.push($(this).val());//将选中的值添加到数组chk_value中    
-        });
-        self.checkedLayers = tempLayers;
+        self.checkedLayers = self.getSelectLayers();
         self.requestImage();
       });
-      
+    },
+    getSelectLayers: function () {
+      var tempLayers = [];
+      $('#wmsManage div.card-body input[name="wms_manage_checked"]:checked').each(function(){//遍历每一个名字为interest的复选框，其中选中的执行函数    
+        tempLayers.push(JSON.parse($(this).val()));//将选中的值添加到数组chk_value中    
+      });
+      console.log(tempLayers)
+      return tempLayers;
     },
     initPlug: function() {
       eventBus.trigger('addPlug',{
@@ -47,39 +54,15 @@ define(function(require, exports, module){
         children: null
       });
       // 获取服务信息 渲染模板
-      var serverConf = {
-        wms: {
-          url: 'http://39.98.79.255:8888/geoserver/test/wms',
-          version: '1.1.1',
-          format: 'image/png',
-          srs: 'EPSG:4547',
-          layers: [
-            {
-              title: '社区边界',
-              value: 'test:community'
-            },
-            {
-              title: '漏洞边界',
-              value: 'test:building'
-            }
-          ]
-        },
-        wfs: {
-          url: 'http://39.98.79.255:8888/geoserver/test/wfs',
-          version: '1.0.0',
-          typenames: 'test:building,test:community',
-          serverType: 'geoserver'
-        }
-      }
-      this.wms = serverConf.wms;
-      this.wfs = serverConf.wfs;
-      this.render(serverConf);
+      var layerConf = config.wmsManageConf;
+      this.layerConf = layerConf;
+      this.render({layerConf});
     },
     activate: function() {
       $('#wmsManage').show();
       // 激活场景事件
-      bt_event.addEventListener("Render\\BeforeRender", this.onBeforRender.bind(this));
-      bt_event.addEventListener('GUIEvent\\KM\\OnMouseClick', this.onClick.bind(this));
+      bt_event.addEventListener("Render\\BeforeRender", this.onBeforRender);
+      bt_event.addEventListener('GUIEvent\\KM\\OnMouseClick', this.onClick);
 
       // 添加二维图层 请求状态恢复默认 fasle
       this.sendingRequest = false;
@@ -89,8 +72,12 @@ define(function(require, exports, module){
     deactivate: function() {
       $('#wmsManage').hide();
       // 移除场景事件
-      bt_event.removeEventListener("Render\\BeforeRender", this.onBeforRender.bind(this));
-      bt_event.removeEventListener('GUIEvent\\KM\\OnMouseClick', this.onClick.bind(this));
+      bt_event.removeEventListener("Render\\BeforeRender", this.onBeforRender);
+      bt_event.removeEventListener('GUIEvent\\KM\\OnMouseClick', this.onClick);
+      // 取消图层列表复选框
+      $('#wmsManage div.card-body input[name="wms_manage_checked"]').each(function() {
+        $(this).prop("checked", false);
+      })
       // 移除显示的数据
       this.hideData();
       // 移除wms图片纹理
@@ -126,7 +113,7 @@ define(function(require, exports, module){
         -9999999999,
         1,
         1,
-        []
+        new Image()
       );
       bt_Util.executeScript("Render\\ForceRedraw;");
     },
@@ -155,27 +142,19 @@ define(function(require, exports, module){
         const width = container.style.width.replace("px", "") * 2;
         const height = container.style.height.replace("px", "") * 2;
 
-        // 图层顺序（按照列表顺序排序）
-        let layerArr = [];
-        for (let i = 0; i < this.wms.layers.length; i++) {
-          if (this.checkedLayers.includes(this.wms.layers[i].value)) {
-            layerArr.push(this.wms.layers[i].value);
-          }
+        // 请求wms服务
+        let srs = this.layerConf.srs,layers = [];
+        for (let i = 0; i < this.checkedLayers.length; i++) {
+          layers.push(this.checkedLayers[i].wms.layer);
         }
-        
-        const {url, format, srs} = this.wms;
-        let layers = layerArr.join(',');
-        var wmsHelper = new WMSHelper({
-          url: url,
+        let wmsHelper = new WMSHelper({
+          url: this.layerConf.wmsUrl,
           layers: layers,
-          srs: srs,
-          format: format
+          srs: `EPSG:${srs}`,
+          format: 'image/png'
         });
-        wmsHelper.getRect(bbox, width, height, (data) =>{
-          for (let i = 0; i < data.length; i = i + 4) {
-            data[i + 3] *= 0.5;
-          }
-          bt_Util.SetGlobalOrthoTexture1(x1, y2, x2, y1, width, height, data);
+        wmsHelper.getRectImage(bbox, width, height, (image) =>{
+          bt_Util.SetGlobalOrthoTexture1(x1, y2, x2, y1, width, height, image);
           bt_Util.executeScript("Render\\ForceRedraw;");
           // 请求完成 状态设为 false
           this.sendingRequest = false;
@@ -192,30 +171,29 @@ define(function(require, exports, module){
 
       // 得到世界坐标系
       const { x, y, z } = bt_Util.screenToWorld(e[1], e[2]);
+      const bbox = [x - res * 2 + this.offsetx, y - res * 2 + this.offsety, x + res * 2 + this.offsetx, y + res * 2 + this.offsety];
 
-      // let bbox = (x - res * 2 + this.offsetx);
-      // bbox += ',' + (y - res * 2 + this.offsety);
-      // bbox += ',' + (x + res * 2 + this.offsetx);
-      // bbox += ',' + (y + res * 2 + this.offsety);
-      let x1 = x - res * 2 + this.offsetx,
-      y1 = y - res * 2 + this.offsety,
-      x2 = x + res * 2 + this.offsetx,
-      y2 = y + res * 2 + this.offsety;
-      const CQL_FILTER = `CONTAINS(geom,POLYGON((${x1} ${y1}, ${x1} ${y2}, ${x2} ${y2}, ${x2} ${y1}, ${x1} ${y1})))`;
-
-      const { url, version,typenames, serverType } = this.wfs;
-      var wfsHelper = new WFSHelper({
-        url: url,
-        version: version,
-        serverType: serverType
+      let featureTypes = [], wfsHelperX = null, srs = this.layerConf.srs;
+      for (let i = 0; i < this.checkedLayers.length; i++) {
+        featureTypes.push(this.checkedLayers[i].wfs.typename);
+      }
+      wfsHelperX = new WFSHelperX({
+        url: this.layerConf.wfsUrl,
+        srsName: `EPSG:${srs}`,
+        geometryName: this.layerConf.geometryName || 'geom'
       });
-      wfsHelper.getFeature(typenames,CQL_FILTER, function(dataArr){
+      let polygon = new ol.geom.Polygon([[[bbox[0], bbox[1]], [bbox[0], bbox[3]], [bbox[2], bbox[3]], [bbox[2], bbox[1]], [bbox[0], bbox[1]]]]);
+      wfsHelperX.getFeaturesBySort({
+        featureTypes,
+        filter: ol.format.filter.contains(this.layerConf.geometryName || 'geom', polygon)
+      }, function(dataArr) {
         // 返回结果前清除上一次显示的结果
         self.hideData();
         for (let data of dataArr) {
+          let gj = wfsHelperX.convertGml3ToGeoJSON(data, `EPSG:${srs}`);
           // 根据typename顺序 取最前面的数据
-          if (data.features.length > 0) {
-            self.showData(data, x, y, z);
+          if (gj.features.length > 0) {
+            self.showData(gj, x, y, z);
             return;
           }
         }
@@ -232,15 +210,6 @@ define(function(require, exports, module){
       bt_Util.executeScript("Render\\RenderDataContex\\SetOsgAttribBox 0;");
     },
     setPop(feature, x, y, z) {
-      // let html = "<div class='wms_poi'>";
-      // html += "<div class='pop'>"
-      // html += "<ul>";
-      // for (let i in feature.properties) {
-      //   html += "<li>" + i + "：" + feature.properties[i] + "</li>"
-      // }
-      // html += "</ul>"
-      // html += "</div>"
-      // html += "</div>"
       var popTPl = require('./pop.html');
       var template = _.template(popTPl);
       bt_Plug_Annotation.setAnnotation('wms_poi_id', x, y, z, -8, -16, template({feature}), false);
@@ -270,17 +239,6 @@ define(function(require, exports, module){
             }
           }
 
-          // for (let i = 0; i < coordinates.length; i++ ) {
-          //   for (let j = 0; j < coordinates[i].length; j++) {
-          //     // 轮廓线点数
-          //     len += coordinates[i][j].length
-          //     for (let k = 0; k < coordinates[i][j].length; k++) {
-          //       allPointArr.push(coordinates[i][j][k][0])
-          //       allPointArr.push(coordinates[i][j][k][1])
-          //     }
-          //   }
-          // }
-
           allPoint = allPointArr.join(' ');
           //执行单体化高亮命令
           let str = `Render\\RenderDataContex\\SetOsgAttribBox -10 9999 ${this.lightColor} ${len} ${allPoint};`
@@ -296,7 +254,7 @@ define(function(require, exports, module){
     getView() { // 获取窗口信息
       let { cameraPt, lookatPt } = bt_Util.getCameraParam();
       let zero = { x: lookatPt.x, y: lookatPt.y, z: 0 }; // 视点位置
-      let vHeight = 2 * Math.tan(0.5) * this.distance3(cameraPt, lookatPt); //窗口高度
+      let vHeight = 2.5 * Math.tan(0.5) * this.distance3(cameraPt, lookatPt); //窗口高度
       return {
         zero,
         vHeight

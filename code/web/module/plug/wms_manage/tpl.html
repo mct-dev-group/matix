@@ -1,13 +1,16 @@
-<div class="card" id="wmsManage" style="width:200px">
+<div class="card" id="wmsManage" style="width:250px">
   <div class="card-header bg-primary text-white">图层管理</div>
   <div class="card-body">
-    <% for (var i = 0; i < wms.layers.length; i++) { %>
-      <% var layer = wms.layers[i] %>
-      <div>
-        <label>
-          <input type="checkbox" name="wms_manage_checked" value="<%= layer.value %>">&nbsp;&nbsp;<%= layer.title %>
-        </label>
-      </div>
-    <% } %>
+    <div>
+      <% var layers = layerConf.layers %>
+      <% for (var i = 0; i < layers.length; i++) { %>
+        <% var layer = layers[i] %>
+        <div>
+          <label>
+            <input type="checkbox" name="wms_manage_checked" value=<%= JSON.stringify(layer)  %>>&nbsp;&nbsp;<%= layer.wms.title %>
+          </label>
+        </div>
+        <% } %>
+    </div>
   </div>
 </div>
