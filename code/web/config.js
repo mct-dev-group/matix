@@ -84,3 +84,11 @@ config.wmsManageConf = {
     }
   ]
 }
+
+// 缓冲查询
+config.bufferQueryConf = {
+  url: 'http://192.168.0.250:12307/geoserver/mct6/wfs',
+  typename: 'mct6:mct6-d2e50da0-b12e-11ea-a976-99eba35d0dff',
+  srs: "4547",
+  geometryName: 'geom'
+}

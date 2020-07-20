@@ -1,5 +1,6 @@
 define(function(require, exports, module){
   var eventBus = require('../../utils/event_bus');
+  var WFSHelperX = require('./../../utils/wfs_helperX');
   var BufferQueryView = Backbone.View.extend({
     drawType: null,
     bufferWidth: 100,
@@ -43,19 +44,15 @@ define(function(require, exports, module){
       });
 
       // 加载服务配置
-      var wfs = {
-        url: 'http://39.98.79.255:8888/geoserver/test/wfs',
-        version: '1.0.0',
-        typename: 'test:point',
-        serverType: 'geoserver'
-      }
-      this.wfs = wfs;
+      this.wfsConf = config.bufferQueryConf;
     },
     activate: function(type) {
       this.drawType = type;
       this.pointArr = [];
       // 激活鼠标单击事件
       bt_event.addEventListener("GUIEvent\\KM\\OnMouseClick", this.onClick);
+      // 激活pos事件
+      $(document).on('mouseenter', '.buffer_poi', this.posEvent);
     },
     deactivate: function() {
       // 清除高亮效果
@@ -95,13 +92,13 @@ define(function(require, exports, module){
         }
       } else if (e[0] == 2) { // 鼠标右键结束绘制 激活标注点击事件
         // 事件失活
-        bt_event.removeEventListener("GUIEvent\\KM\\OnMouseClick", this.onClick);
-        bt_event.removeEventListener("GUIEvent\\KM\\OnMouseMove", this.onMouseMove);
-        bt_event.removeEventListener("GUIEvent\\KM\\OnMouseDbClick", this.onDbClick);
-        // 清除绘制线段
-        bt_Util.executeScript("Render\\RenderDataContex\\DynamicFrame\\DelRenderObj buffer_lineOrPolygon 8;");
-        // 激活pos事件
-        $(document).on('click', '.buffer_poi', this.posEvent);
+        // bt_event.removeEventListener("GUIEvent\\KM\\OnMouseClick", this.onClick);
+        // bt_event.removeEventListener("GUIEvent\\KM\\OnMouseMove", this.onMouseMove);
+        // bt_event.removeEventListener("GUIEvent\\KM\\OnMouseDbClick", this.onDbClick);
+        // // 清除绘制线段
+        // bt_Util.executeScript("Render\\RenderDataContex\\DynamicFrame\\DelRenderObj buffer_lineOrPolygon 8;");
+        // // 激活pos事件
+        // $(document).on('click', '.buffer_poi', this.posEvent);
       }
     },
     onMouseMove: function(e) {
@@ -274,50 +271,70 @@ define(function(require, exports, module){
       bt_Util.executeScript(str);
     },
     requestFeature (pointStr) {
+      var self = this;
+      let coordinates = [];
       const pointArr = pointStr.split(' ');
-      const { url, version, typename, serverType } = this.wfs;
-      let outputformat = '';
-      let urlStr = '';
-      if (serverType && serverType == 'geoserver') {
-        outputformat = '&outputFormat=application/json';
-        let polygon2 = '';
-        for (let i = 0; i < pointArr.length; i+=2) {
-          polygon2 += `${pointArr[i]} ${pointArr[i+1]},`;
-        }
-        polygon2 = polygon2.substring(0, polygon2.length -1);
-        const CQL_FILTER = `Intersects(the_geom,POLYGON((${polygon2})))`;
-        urlStr = `${url}?service=WFS&request=GetFeature&version=${version}&typename=${typename}&CQL_FILTER=${CQL_FILTER}${outputformat}`;
-      } else {
-        let polygon =  ``;
-        for (let i = 0; i < pointArr.length; i+=2) {
-          polygon += `${pointArr[i]},${pointArr[i+1]} `;
-        }
-        const filter = `<ogc:Filter><ogc:Intersects><ogc:PropertyName>Shape</ogc:PropertyName><gml:Polygon><gml:outerBoundaryIs><gml:LinearRing><gml:coordinates>${polygon}</gml:coordinates></gml:LinearRing></gml:outerBoundaryIs></gml:Polygon></ogc:Intersects></ogc:Filter>`;
-        urlStr = `${url}?service=WFS&request=GetFeature&version=${version}&typename=${typename}&filter=${filter}${outputformat}`;
+      for (let i = 0; i < pointArr.length; i+=2) {
+        coordinates.push([pointArr[i], pointArr[i+1]]);
       }
+      const {url, typename, srs, geometryName } = this.wfsConf;
+      let wfsHelperX = new WFSHelperX({
+        url,
+        srsName: `EPSG:${srs}`,
+        geometryName
+      });
+      wfsHelperX.getFeatures({
+        featureTypes: [typename],
+        filter: ol.format.filter.intersects(geometryName, new ol.geom.Polygon([coordinates]))
+      }, function(data) {
+        let gj = wfsHelperX.convertGml3ToGeoJSON(data, `EPSG:${srs}`);
+        self.showPos(gj);
+      });
+    
+      // const pointArr = pointStr.split(' ');
+      // const { url, version, typename, serverType } = this.wfs;
+      // let outputformat = '';
+      // let urlStr = '';
+      // if (serverType && serverType == 'geoserver') {
+      //   outputformat = '&outputFormat=application/json';
+      //   let polygon2 = '';
+      //   for (let i = 0; i < pointArr.length; i+=2) {
+      //     polygon2 += `${pointArr[i]} ${pointArr[i+1]},`;
+      //   }
+      //   polygon2 = polygon2.substring(0, polygon2.length -1);
+      //   const CQL_FILTER = `Intersects(the_geom,POLYGON((${polygon2})))`;
+      //   urlStr = `${url}?service=WFS&request=GetFeature&version=${version}&typename=${typename}&CQL_FILTER=${CQL_FILTER}${outputformat}`;
+      // } else {
+      //   let polygon =  ``;
+      //   for (let i = 0; i < pointArr.length; i+=2) {
+      //     polygon += `${pointArr[i]},${pointArr[i+1]} `;
+      //   }
+      //   const filter = `<ogc:Filter><ogc:Intersects><ogc:PropertyName>Shape</ogc:PropertyName><gml:Polygon><gml:outerBoundaryIs><gml:LinearRing><gml:coordinates>${polygon}</gml:coordinates></gml:LinearRing></gml:outerBoundaryIs></gml:Polygon></ogc:Intersects></ogc:Filter>`;
+      //   urlStr = `${url}?service=WFS&request=GetFeature&version=${version}&typename=${typename}&filter=${filter}${outputformat}`;
+      // }
       // if (serverType && serverType == 'geoserver') outputformat = '&outputFormat=application/json';
       // const filter = `<ogc:Filter><ogc:Intersects><ogc:PropertyName>Shape</ogc:PropertyName><gml:Polygon><gml:outerBoundaryIs><gml:LinearRing><gml:coordinates>${polygon}</gml:coordinates></gml:LinearRing></gml:outerBoundaryIs></gml:Polygon></ogc:Intersects></ogc:Filter>`;
       // const urlStr = `${url}?service=WFS&request=GetFeature&version=${version}&typename=${typename}&filter=${filter}${outputformat}`;
 
-      $.ajax({
-        url: urlStr,
-        type: 'get',
-        dataType: 'text',
-        timeout: 5000,
-        success: (data) => {
-          if (serverType && serverType == 'geoserver') {
-            const gj = JSON.parse(data);
-            this.showPos(gj);
-          } else {
-            const gmlParser = new GMLParser();
-            const gj = gmlParser.gml2Geojson(data);          
-            this.showPos(gj);
-          }
-        },
-        error: (error) => {
-          console.log(error);
-        }
-      })
+      // $.ajax({
+      //   url: urlStr,
+      //   type: 'get',
+      //   dataType: 'text',
+      //   timeout: 5000,
+      //   success: (data) => {
+      //     if (serverType && serverType == 'geoserver') {
+      //       const gj = JSON.parse(data);
+      //       this.showPos(gj);
+      //     } else {
+      //       const gmlParser = new GMLParser();
+      //       const gj = gmlParser.gml2Geojson(data);          
+      //       this.showPos(gj);
+      //     }
+      //   },
+      //   error: (error) => {
+      //     console.log(error);
+      //   }
+      // })
     },
     showPos (data) {
       const features = data.features;
@@ -329,22 +346,14 @@ define(function(require, exports, module){
         const result = bt_Util.executeScript(`Render\\CameraControl\\LineIntersect ${x} ${y} -10 ${x} ${y} 8848;`);
         const resultArr = result[0].split(' ');
         const z = resultArr[0] == 1 ? resultArr[3] : 10;
-        let html = "<div class='buffer_poi'>";
-          html += "<div class='pop'>";
-          html += "<ul>";
-          for (let i in feature.properties) {
-            html += "<li>" + i + "：" + feature.properties[i] + "</li>";
-          }
-          html += "</ul>";
-          html += "</div>";
-          html += "</div>";
-          
-        bt_Plug_Annotation.setAnnotation('buffer_poi_'+i, x, y, z, -8, -16, html, false);
+        var popTPl = require('./pop.html');
+        var template = _.template(popTPl);
+        bt_Plug_Annotation.setAnnotation('buffer_poi_'+i, x, y, z, -8, -16, template({feature}), false);
       }
     },
     posEvent (e) {
-      $('.buffer_poi .pop').hide();
-      $(e.currentTarget).find('.pop').show();
+      $('.buffer_poi .bufferPop').hide();
+      $(e.currentTarget).find('.bufferPop').show();
       $('.bt_ui_element').css({'z-index':10})
       $(e.currentTarget).parent().parent().css({'z-index':11});
     },
