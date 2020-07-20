@@ -1,9 +1,10 @@
 /**
- * 地图截图
- * @sp
+ * 点线面测量
  */
 define(function(require, exports, module){
   var eventBus = require('../../utils/event_bus');
+  var plug_area = require('./plug_area').init_plugin_area(); // 加载面积计算插件
+
   var MeasurementView = Backbone.View.extend({
     drawEnd: false,
     drawType: null,
@@ -34,18 +35,27 @@ define(function(require, exports, module){
             title: '线测量',
             type: 'line',
             icon: 'fa fa-vine'
+          },
+          {
+            title: '面测量',
+            type: 'polygon',
+            icon: 'fa fa-square-o'
           }
         ]
       });
-      console.log('加载sample2插件。。。。');
     },
     activate: function(type) {
       this.drawType = type;
       this.pointArr = [];
-      // 激活鼠标单击事件
-      bt_event.addEventListener("GUIEvent\\KM\\OnMouseClick", this.onClick);
+      // 如果点击的是面积测量, 则激活面积测量插件
+      if (this.drawType === 'polygon') {
+        plug_area.activate();
+      } else {
+        bt_event.addEventListener("GUIEvent\\KM\\OnMouseClick", this.onClick);
+      }
     },
     deactivate: function() {
+      plug_area.deactivate();
       // 移除鼠标移动和双击事件
       bt_event.removeEventListener("GUIEvent\\KM\\OnMouseClick", this.onClick);
       bt_event.removeEventListener("GUIEvent\\KM\\OnMouseDbClick", this.onDbClick);

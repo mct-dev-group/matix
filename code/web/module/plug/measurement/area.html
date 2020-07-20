@@ -1,0 +1,18 @@
+<div id="div_area" style="position: fixed; left: 20px; bottom: 20px; z-index: 9999;">
+    <div id='pathTipDiv' class="card">
+        <div class="card-body">
+            <h5 class="card-title"><i class="fa fa-info-circle"></i>
+                <span style="display: <%= size <= 0 ? 'none' : 'unset' %>;">占地面积S=<%= size %>m²</span>
+                <del style="display: <%= size <= 0 ? 'unset' : 'none' %>;">占地面积S=<%= old_size %>m²</del>
+            </h5>
+            <p class="card-text">
+                撤销：Ctrl + Z 或鼠标右键
+                <br />
+                清空：Ctrl + D
+                <br />
+                空格：<span id="area_switch"><%= pause ? '继续测量' : '暂停测量' %></span>
+            </p>
+        </div>
+
+    </div>
+</div>

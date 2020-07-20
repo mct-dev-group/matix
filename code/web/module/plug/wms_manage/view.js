@@ -138,9 +138,11 @@ define(function(require, exports, module){
         bbox += "," + y2;
 
         // 获取容器大小
-        const container = document.getElementById("bt_container");
-        const width = container.style.width.replace("px", "") * 2;
-        const height = container.style.height.replace("px", "") * 2;
+        // const container = document.getElementById("bt_container");
+        // const width = container.style.width.replace("px", "") * 2;
+        // const height = container.style.height.replace("px", "") * 2;
+        const width = document.getElementById('bt_container').clientWidth;
+        const height = document.getElementById('bt_container').clientHeight;
 
         // 请求wms服务
         let srs = this.layerConf.srs,layers = [];
@@ -166,8 +168,10 @@ define(function(require, exports, module){
     requestFeature(e) {
       var self = this;
       // 获取分辨率
-      const container = document.getElementById("bt_container");
-      const res = this.getView().vHeight / container.style.height.replace('px', '');
+      // const container = document.getElementById("bt_container");
+      // const width = document.getElementById('bt_container').clientWidth;
+      const height = document.getElementById('bt_container').clientHeight;
+      const res = this.getView().vHeight / height;
 
       // 得到世界坐标系
       const { x, y, z } = bt_Util.screenToWorld(e[1], e[2]);

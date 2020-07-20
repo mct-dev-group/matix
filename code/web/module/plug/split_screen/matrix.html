@@ -15,8 +15,9 @@
 <body style="overflow: hidden;height: 100%;">
   <div class="matrix" id="bt_container" style="width: 100vw; height: 100vh;">
     <canvas id="canvasgl" tabindex="0"></canvas>
-    <div class="compass" id="compassBox"></div>
   </div>
+  <!-- 遮罩层 -->
+  <div class="mask" style="position: absolute;top: 0; width: 100vw; height: 100vh;"></div>
   <script src="/config.js"></script>
   <script>
     var Module = {};
@@ -68,8 +69,24 @@
       });
       bt_Util.executeScript(`Render\\Camera\\SetParam ${config.cameraParam};`);
     }
+
+    function init () {
+      if (window.addEventListener) {  // all browsers except IE before version 9
+          window.addEventListener("message", OnMessage, false);
+      } else {
+        if (window.attachEvent) {   // IE before version 9
+        window.attachEvent("onmessage", OnMessage);
+        }
+      }
+    };
+
+    function OnMessage (e) {
+      console.log(e.data);
+      bt_Util.executeScript(`Render\\Camera\\SetParam ${e.data.cameraPt.x} ${e.data.cameraPt.y} ${e.data.cameraPt.z} ${e.data.lookatPt.x} ${e.data.lookatPt.y} ${e.data.lookatPt.z} ${e.data.upVec.x} ${e.data.upVec.y} ${e.data.upVec.z};`);
+    }
     
     initMatrx();
+    init();
   </script>
 
 </body>
