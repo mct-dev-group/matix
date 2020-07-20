@@ -41,7 +41,6 @@ define(function(require, exports, module){
       $('#wmsManage div.card-body input[name="wms_manage_checked"]:checked').each(function(){//遍历每一个名字为interest的复选框，其中选中的执行函数    
         tempLayers.push(JSON.parse($(this).val()));//将选中的值添加到数组chk_value中    
       });
-      console.log(tempLayers)
       return tempLayers;
     },
     initPlug: function() {

@@ -99,7 +99,6 @@ define(function(require, exports, module){
           data: payload,
           timeout: 5000,
           success: (data) => {
-            console.log(data);
             resolve(data);
           },
           error: (error) => {
