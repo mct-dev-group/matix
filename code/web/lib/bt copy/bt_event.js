@@ -553,27 +553,29 @@ function JS_BT_UIElementAddText(msg, x, y) {
 }
 
 function BT_RenderFrame() {
-  document.getElementById("bt_container").style.width =
-    $(window).width() + "px";
-  document.getElementById("bt_container").style.height =
-    $(window).height() + "px";
-  if (
-    document.getElementById("canvasgl").width !=
-    document.getElementById("bt_container").clientWidth
-  ) {
-    document.getElementById("canvasgl").width = document.getElementById(
-      "bt_container"
-    ).clientWidth;
-  }
-  if (
-    document.getElementById("canvasgl").height !=
-    document.getElementById("bt_container").clientHeight
-  ) {
-    document.getElementById("canvasgl").height = document.getElementById(
-      "bt_container"
-    ).clientHeight;
-  }
-  canvas = document.getElementById("canvasgl");
+  // document.getElementById("bt_container").style.width =
+  //   $(window).width() + "px";
+  // document.getElementById("bt_container").style.height =
+  //   $(window).height() + "px";
+  // if (
+  //   document.getElementById("canvasgl").width !=
+  //   document.getElementById("bt_container").clientWidth
+  // ) {
+  //   document.getElementById("canvasgl").width = document.getElementById(
+  //     "bt_container"
+  //   ).clientWidth;
+  // }
+  // if (
+  //   document.getElementById("canvasgl").height !=
+  //   document.getElementById("bt_container").clientHeight
+  // ) {
+  //   document.getElementById("canvasgl").height = document.getElementById(
+  //     "bt_container"
+  //   ).clientHeight;
+  // }
+  // canvas = document.getElementById("canvasgl");
+  document.getElementById("canvasgl").width = document.getElementById('bt_container').clientWidth;
+  document.getElementById('canvasgl').height = document.getElementById('bt_container').clientHeight;
   var script =
     "Render\\OnRender " + canvasgl.width + " " + canvasgl.height + ";";
   bt_Util.executeScript(script);

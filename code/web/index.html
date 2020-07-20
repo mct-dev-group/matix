@@ -17,6 +17,7 @@
   <script>
     var Module = {};
     Module.TOTAL_MEMORY = config.totalMemory || 1024*1024*1024;
+    Module.bt_pa_url = './lib/bt/bt_pa.js';
   </script>
   <!--第三方库-->
   <script src="./lib/jquery-3.3.1.js"></script>
@@ -37,10 +38,10 @@
   <script src="./lib/MathUtils.js"></script>
 
   <!--核心库-->
-  <script src="./bt_a.js"></script>
-  <script src="./bt_util.js"></script>
-  <script src="./bt_event.js"></script>
-  <script src="./bt_plug_annotation.js"></script>
+  <script src="./lib/bt/bt_a.js"></script>
+  <script src="./lib/bt/bt_util.js"></script>
+  <script src="./lib/bt/bt_event.js"></script>
+  <script src="./lib/bt/bt_plug_annotation.js"></script>
 
   <!--其他文件-->
   <script src="./common/bt_localDB.js"></script>

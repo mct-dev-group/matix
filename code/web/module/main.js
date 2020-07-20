@@ -18,7 +18,8 @@ var modules = [
   // './module/plug/pb_reader/action',
   // './module/plug/path/action',
   // './module/plug/auto_collect/action',
-  // './module/plug/perspective_analysis/action'
+  // './module/plug/perspective_analysis/action',
+  './module/plug/split_screen/action',
 
   // ol地图
   // './module/plug_ol/draw_vector/action'

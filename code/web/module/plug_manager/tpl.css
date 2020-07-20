@@ -4,6 +4,7 @@
   top: 30px;
   display: flex;
   background: #007bff;
+  z-index: 5;
 }
 /* .plugManager .plug_btn:not(.activePlug):focus {
   color: #606266;
