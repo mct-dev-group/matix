@@ -77,6 +77,7 @@ define(function(require, exports, module){
       $('#wmsManage div.card-body input[name="wms_manage_checked"]').each(function() {
         $(this).prop("checked", false);
       })
+      this.checkedLayers = [];
       // 移除显示的数据
       this.hideData();
       // 移除wms图片纹理

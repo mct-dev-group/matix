@@ -1,0 +1,17 @@
+.minimap {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  width: 250px;
+  height: 150px;
+  background: rebeccapurple;
+  opacity: 0;
+  z-index: -1;
+}
+
+.minimap #cameraPic {
+  position: absolute;
+  height: 150px;
+  width: 250px;
+  z-index: 999;
+}

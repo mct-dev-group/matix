@@ -3,10 +3,6 @@ seajs.use('./module/matrix/action', function(action){
   action.start();
 });
 
-// seajs.use('./module/ol/action', function(action){
-//   action.start();
-// });
-
 // 插件管理器
 var modules = [
   './module/plug_manager/action',
@@ -20,9 +16,7 @@ var modules = [
   './module/plug/auto_collect/action',
   './module/plug/perspective_analysis/action',
   './module/plug/split_screen/action',
-
-  // ol地图
-  // './module/plug_ol/draw_vector/action'
+  './module/plug/minimap/action'
 ];
 
 seajs.use(modules, function(...actions){
@@ -30,6 +24,14 @@ seajs.use(modules, function(...actions){
     action.start();
   });
 });
+
+// seajs.use('./module/ol/action', function(action){
+//   action.start();
+// });
+// var modules = [
+//   // ol地图
+//   './module/plug_ol/draw_vector/action'
+// ];
 
 seajs.use('./module/utils/MessageBox/action');
 seajs.use('./module/utils/Message/action');

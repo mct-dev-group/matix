@@ -1,0 +1,14 @@
+<div class="buffer_poi">
+  <div class="card bufferPop" style="width:250px;border: 0;">
+    <div class="card-header bg-primary text-white" style="padding: .45rem 1.25rem;">属性展示</div>
+    <div class="card-body" style="max-height: 200px;min-height: 200px;overflow-y: auto;color: black;padding: 0;">
+      <ul style="list-style: none;padding: 10px;">
+        <% for (let i in feature.properties) { %>
+          <li>
+            <span style="display: inline-block;width: 60px;"><%= i%></span>：<span><%= feature.properties[i] %></span>
+          </li>
+        <% } %>
+      </ul>
+    </div>
+  </div>
+</div>

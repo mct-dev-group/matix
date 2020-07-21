@@ -92,3 +92,14 @@ config.bufferQueryConf = {
   srs: "4547",
   geometryName: 'geom'
 }
+
+// 鹰眼
+config.miniMapConf = {
+  srs: '4547',
+  layers: [
+    {
+      url: 'http://192.168.0.250:6080/arcgis/services/qibin/qibin/MapServer/WmsServer',
+      layer: '1'
+    }
+  ]
+}

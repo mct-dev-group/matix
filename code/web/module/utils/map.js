@@ -12,7 +12,9 @@ define(function() {
         viewOpt.zoom = option.zoom;
       }
       this.map = new ol.Map({
-        // controls: ol.control.defaults(),
+        controls: ol.control.defaults({
+          zoom: false,
+        }),
         // interactions: ol.interaction.defaults().extend([
         //   new ol.interaction.DragRotateAndZoom()
         // ]),
