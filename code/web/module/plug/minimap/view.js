@@ -30,10 +30,12 @@ define(function(require, exports, module) {
     activate: function(type) {
       $('#minimap').css('opacity',1);
       $('#minimap').css('z-index',0);
+      this.addLayer();
     },
     deactivate: function() {
       $('#minimap').css('opacity',0);
       $('#minimap').css('z-index',-1);
+      this.removeLayer();
     },
     initMap: function() {
       if (this.layers.length > 0) {
@@ -46,25 +48,33 @@ define(function(require, exports, module) {
           target: 'minimap',
           epsg: srsName
         });
-
-        for (let i = 0; i < this.layers.length; i++) {
-          var layer = new ol.layer.Image({
-            source: new ol.source.ImageWMS({
-              url: this.layers[i].url,
-              params: {
-                FORMAT: 'image/png',
-                VERSION: '1.1.1',
-                LAYERS: this.layers[i].layer
-              }
-            })
-          });
-          map.addLayer(layer);
-        }
       }
       map.getInteractions().forEach(function(element,index,array){
         if(element instanceof ol.interaction.DragPan){
           element.setActive(false);
         }
+      });
+    },
+    addLayer: function () {
+      var map = Map.getMap();
+      for (let i = 0; i < this.layers.length; i++) {
+        var layer = new ol.layer.Image({
+          source: new ol.source.ImageWMS({
+            url: this.layers[i].url,
+            params: {
+              FORMAT: 'image/png',
+              VERSION: '1.1.1',
+              LAYERS: this.layers[i].layer
+            }
+          })
+        });
+        map.addLayer(layer);
+      }
+    },
+    removeLayer: function () {
+      var map = Map.getMap();
+      map.getLayers().forEach(layer => {
+        map.removeLayer(layer);
       });
     },
     initCameraPic: function() {
