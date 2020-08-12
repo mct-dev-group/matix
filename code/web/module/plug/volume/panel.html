@@ -1,0 +1,77 @@
+<div id="volume-panel">
+<div id="volume-panel-1" style="width: 270px; position: fixed; left: 20px; bottom: 20px; z-index: 9999;">
+    <div class="card">
+        <div class="alert alert-primary" role="alert" style="margin-bottom: 0;">
+            <h5>选择施工区域</h5>
+        </div>
+        <div class="card-body">
+            <p class="card-text">
+                <span>撤销：Ctrl + Z 或鼠标右键</span>
+                <br />
+                <span>清空：Ctrl + D</span>
+                <br />
+                <!-- <span>空格：</span><span id="area_switch">继续选择</span> -->
+                <span>空格：</span><span id="area_switch"><%= pause ? '继续选择' : '暂停选择' %></span>
+                <br />
+                <span>回车：进入下一步</span>
+            </p>
+            <div class="card-text" style="text-align:right;">
+                <button id="volume-panel-1-btn-next" type="button" class="btn btn-success" style="position: right"
+                    <%= close ? '' : 'disabled' %>
+                    onclick2="$(`#volume-panel-1, #volume-panel-2`).toggle()">下一步</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="volume-panel-2" style="width: 290px; position: fixed; left: 20px; bottom: 20px; z-index: 9999; display: none;">
+    <div class="card">
+        <div class="alert alert-primary" role="alert" style="margin-bottom: 0; user-select: none;">
+            <h5>输入高程</h5>
+        </div>
+
+        <div class="card-body">
+            <div class="input-group flex-nowrap" style="user-select: none;">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="addon-wrapping">高程值</span>
+                </div>
+                <input autocomplete="off" id="volume-panel-height" type="number" class="form-control" placeholder="" aria-label="" aria-describedby="addon-wrapping">
+            </div>
+
+            <div class="card-text" style="text-align:right; margin: 20px 0; user-select: none;">
+                <button id="draw-height" type="button" class="btn btn-info">视觉反馈</button>
+                <button id='clip-z' type="button" class="btn btn-info">压平</button>
+            </div>
+
+            <div class="text-danger">
+                <i class="fa fa-info-circle"></i>
+                <span>精确度影响计算时间和准确度</span>
+            </div>
+
+            <div class="input-group flex-nowrap">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="addon-wrapping" style="user-select: none;">精确度</span>
+                    <input type="text" readonly="readonly" id="volume-panel-2-precision-text" value="10"
+                        class="form-control" placeholder="" aria-label="" aria-describedby="addon-wrapping">
+                </div>
+            </div>
+
+            <div style="margin-top: 4px;" class="text-info">
+                <span style="user-select: none;">&nbsp;精度调节</span>
+                <input style="width: 175px; user-select: none;" type="range" min="1" id="volume-panel-2-precision"
+                    oninput="$(`#volume-panel-2-precision-text`).attr('value', event.target.value)" value=10>
+            </div>
+
+            <div>
+                <div id="volume-panel-info" style="margin-top: 10px;"></div>
+            </div>
+
+            <div class="card-text" style="text-align:right; margin-top: 20px; user-select: none;">
+                <button id="volume-panel-2-btn-previous" type="button" class="btn btn-dark"
+                    onclick="$(`#volume-panel-1, #volume-panel-2`).toggle()">上一步</button>
+                <button id='calc-polygon-volume' type="button" class="btn btn-success">开始计算</button>
+            </div>
+        </div>
+    </div>
+</div>
+</div>

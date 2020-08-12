@@ -16,7 +16,8 @@ var modules = [
   './module/plug/auto_collect/action',
   './module/plug/perspective_analysis/action',
   './module/plug/split_screen/action',
-  './module/plug/minimap/action'
+  './module/plug/minimap/action',
+  './module/plug/volume/action'
 ];
 
 seajs.use(modules, function(...actions){
