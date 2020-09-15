@@ -1,0 +1,52 @@
+#symbolPanel{
+  position: absolute;
+  width: 220px;
+  right: 60px;
+  top: 100px;
+  border: 0;
+  display: none;
+}
+
+#symbolPanel .card-header{
+  padding: .45rem 1.25rem;
+}
+
+#symbolCtrlPanel{
+  position: absolute;
+  width: 332px;
+  height: 350px;
+  right: 60px;
+  bottom: 120px;
+  border: 0;
+  display: none;
+}
+
+#symbolCtrlPanel .card-header{
+  padding: .45rem 1.25rem;
+}
+
+#instancePanel {
+  position: absolute;
+  width: 220px;
+  height: 320px;
+  right: 60px;
+  top: 100px;
+  border: 0;
+}
+
+#instancePanel .card-header{
+  padding: .45rem 1.25rem;
+}
+
+#instancePanel .card-body{
+  overflow-y: auto;
+}
+
+#instancePanel .card-body ul{
+  list-style: none;
+  padding: 0;
+}
+#instancePanel .card-body ul li:hover{
+  background: #ededed;
+  cursor: pointer;
+}

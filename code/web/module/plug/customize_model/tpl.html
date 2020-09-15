@@ -1,0 +1,15 @@
+<div class="card" id="symbolPanel">
+  <div class="card-header bg-primary text-white">符号列表</div>
+  <div class="card-body">
+    <div>
+      <% for (var i = 0; i < symbolList.length; i++) { %>
+        <% var symbol = symbolList[i] %>
+        <div>
+          <label>
+            <input type="checkbox" name="symbol_checked" value=<%= symbol.symbol_name  %>>&nbsp;&nbsp;<%= symbol.symbol_title&&symbol.symbol_title != '' ? symbol.symbol_title : symbol.symbol_name %>
+          </label>
+        </div>
+        <% } %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,11 @@
+<div class="card" id="instancePanel">
+  <div class="card-header bg-primary text-white">实例列表</div>
+  <div class="card-body">
+    <ul>
+      <% for(var i = 0; i < symbolInstanceList.length; i++){ %>
+      <% var item = symbolInstanceList[i] %>
+        <li data-val=<%= JSON.stringify(item) %>><%= i+1 %>、<%= item.name %></li>
+      <% } %>
+    </ul>
+  </div>
+</div>
